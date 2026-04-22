@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PrepPals 🍱 Kids Lunch Made Easy</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --yellow:#FFD93D; --orange:#FF6B35; --pink:#FF4D8D;
+    --green:#06D6A0; --blue:#4CC9F0; --purple:#7B2FBE;
+    --bg:#FFF8F0; --white:#ffffff; --dark:#1a1a2e;
+    --text:#2d2d44; --muted:#8a8aaa;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);font-family:'Nunito',sans-serif;color:var(--text);overflow-x:hidden;cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='26'%3E🍴%3C/text%3E%3C/svg%3E") 8 8,auto;}
+
+  /* BLOBS */
+  .blobs{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+  .blob{position:absolute;border-radius:50%;filter:blur(60px);opacity:0.15;animation:blobFloat 8s ease-in-out infinite;}
+  .blob1{width:400px;height:400px;background:var(--pink);top:-100px;left:-100px;}
+  .blob2{width:350px;height:350px;background:var(--blue);top:30%;right:-80px;animation-delay:2s;}
+  .blob3{width:300px;height:300px;background:var(--yellow);bottom:10%;left:20%;animation-delay:4s;}
+  .blob4{width:250px;height:250px;background:var(--green);bottom:-80px;right:10%;animation-delay:1s;}
+  @keyframes blobFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-30px) scale(1.05)}}
+  .dots-bg{position:fixed;inset:0;pointer-events:none;z-index:0;background-image:radial-gradient(circle,#FFD93D44 2px,transparent 2px),radial-gradient(circle,#FF4D8D33 2px,transparent 2px);background-size:60px 60px,90px 90px;background-position:0 0,30px 30px;}
+
+  /* NAV */
+  nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.9);backdrop-filter:blur(20px);border-bottom:3px solid var(--yellow);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:70px;box-shadow:0 4px 20px rgba(0,0,0,0.06);}
+  .logo{font-family:'Fredoka One',cursive;font-size:28px;background:linear-gradient(135deg,var(--orange),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:flex;align-items:center;gap:6px;}
+  .logo-emoji{font-size:26px;-webkit-text-fill-color:initial;animation:wiggle 2s ease-in-out infinite;}
+  @keyframes wiggle{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
+  .nav-tabs{display:flex;gap:6px;}
+  .nav-tab{padding:8px 18px;border-radius:100px;font-size:14px;font-weight:700;cursor:pointer;border:2.5px solid transparent;background:transparent;color:var(--muted);transition:all 0.2s;font-family:'Nunito',sans-serif;}
+  .nav-tab.active{background:var(--yellow);color:var(--dark);border-color:var(--orange);}
+  .nav-tab:hover:not(.active){background:#f5f5f5;color:var(--text);}
+  .cart-btn{background:linear-gradient(135deg,var(--orange),var(--pink));color:white;border:none;border-radius:100px;padding:10px 22px;font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:8px;box-shadow:0 4px 15px rgba(255,107,53,0.35);transition:all 0.2s;font-family:'Nunito',sans-serif;}
+  .cart-btn:hover{transform:scale(1.05);}
+  .cart-count{background:white;color:var(--orange);border-radius:50%;width:22px;height:22px;font-size:12px;font-weight:900;display:flex;align-items:center;justify-content:center;}
+
+  /* HERO */
+  .hero{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:60px 24px 40px;display:flex;align-items:center;gap:40px;}
+  .hero-left{flex:1;}
+  .hero-tag{display:inline-flex;align-items:center;gap:8px;background:var(--yellow);color:var(--dark);border-radius:100px;padding:6px 16px;font-size:13px;font-weight:800;margin-bottom:20px;box-shadow:3px 3px 0 var(--orange);}
+  .hero h1{font-family:'Fredoka One',cursive;font-size:clamp(36px,5.5vw,62px);line-height:1.1;margin-bottom:18px;color:var(--dark);}
+  .hero h1 .highlight{background:linear-gradient(135deg,var(--orange),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+  .hero p{font-size:17px;line-height:1.6;color:var(--muted);max-width:420px;margin-bottom:30px;font-weight:600;}
+  .hero-btns{display:flex;gap:12px;flex-wrap:wrap;}
+  .btn-main{background:linear-gradient(135deg,var(--orange),var(--pink));color:white;border:none;border-radius:16px;padding:15px 30px;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 6px 20px rgba(255,107,53,0.35);transition:all 0.2s;font-family:'Nunito',sans-serif;}
+  .btn-main:hover{transform:translateY(-2px);}
+  .btn-sec{background:white;color:var(--text);border:2.5px solid #e0e0e0;border-radius:16px;padding:15px 30px;font-size:16px;font-weight:800;cursor:pointer;transition:all 0.2s;font-family:'Nunito',sans-serif;}
+  .btn-sec:hover{border-color:var(--orange);color:var(--orange);}
+  .hero-right{display:flex;flex-direction:column;gap:14px;flex-shrink:0;}
+  .stat-bubble{background:white;border-radius:20px;padding:18px 24px;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,0.08);border:3px solid transparent;transition:transform 0.2s;min-width:140px;}
+  .stat-bubble:nth-child(1){border-color:var(--yellow);}
+  .stat-bubble:nth-child(2){border-color:var(--pink);}
+  .stat-bubble:nth-child(3){border-color:var(--green);}
+  .stat-bubble:hover{transform:rotate(-2deg) scale(1.03);}
+  .stat-num{font-family:'Fredoka One',cursive;font-size:30px;color:var(--orange);}
+  .stat-label{font-size:12px;font-weight:700;color:var(--muted);margin-top:2px;}
+
+  /* SECTION */
+  .section{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 24px 60px;}
+  .section-title{font-family:'Fredoka One',cursive;font-size:30px;color:var(--dark);display:flex;align-items:center;gap:10px;margin-bottom:24px;}
+
+  /* CATS */
+  .cats{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 24px 28px;display:flex;gap:10px;flex-wrap:wrap;}
+  .cat-pill{padding:9px 20px;border-radius:100px;font-size:14px;font-weight:800;cursor:pointer;border:2.5px solid #e5e5e5;background:white;color:var(--muted);transition:all 0.2s;font-family:'Nunito',sans-serif;box-shadow:2px 2px 0 #e5e5e5;}
+  .cat-pill.active{background:var(--yellow);color:var(--dark);border-color:var(--orange);box-shadow:3px 3px 0 var(--orange);}
+  .cat-pill:hover:not(.active){border-color:var(--orange);color:var(--orange);}
+
+  /* MEAL GRID */
+  .meal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:22px;}
+  .meal-card{background:white;border-radius:24px;border:3px solid #f0f0f0;overflow:hidden;cursor:pointer;transition:all 0.25s;box-shadow:0 4px 16px rgba(0,0,0,0.06);}
+  .meal-card:hover{transform:translateY(-6px) rotate(0.4deg);box-shadow:0 16px 40px rgba(0,0,0,0.12);border-color:var(--yellow);}
+  .meal-img{height:190px;width:100%;position:relative;overflow:hidden;}
+  .meal-img img{width:100%;height:100%;object-fit:cover;transition:transform 0.4s;}
+  .meal-card:hover .meal-img img{transform:scale(1.08);}
+  .meal-img-fallback{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:72px;}
+  .meal-badge{position:absolute;top:10px;left:10px;border-radius:100px;padding:4px 12px;font-size:11px;font-weight:800;box-shadow:2px 2px 0 rgba(0,0,0,0.15);}
+  .badge-fave{background:var(--pink);color:white;}
+  .badge-hot{background:var(--orange);color:white;}
+  .badge-new{background:var(--green);color:white;}
+  .badge-healthy{background:var(--blue);color:white;}
+  .badge-yummy{background:var(--yellow);color:var(--dark);}
+  .meal-time{position:absolute;top:10px;right:10px;background:rgba(255,255,255,0.92);border-radius:100px;padding:4px 10px;font-size:11px;font-weight:700;color:var(--muted);}
+  .meal-cals{position:absolute;bottom:10px;right:10px;background:rgba(26,26,46,0.75);border-radius:100px;padding:4px 10px;font-size:11px;font-weight:800;color:white;}
+  .meal-info{padding:16px;}
+  .meal-name{font-family:'Fredoka One',cursive;font-size:18px;color:var(--dark);margin-bottom:4px;}
+  .meal-desc{font-size:13px;color:var(--muted);font-weight:600;line-height:1.5;margin-bottom:14px;}
+  .meal-footer{display:flex;align-items:center;justify-content:space-between;}
+  .meal-price{font-family:'Fredoka One',cursive;font-size:22px;color:var(--orange);}
+  .meal-price small{font-family:'Nunito',sans-serif;font-size:12px;color:var(--muted);font-weight:600;}
+  .card-btns{display:flex;gap:8px;}
+  .info-btn{width:38px;height:38px;border-radius:12px;background:#f5f5f5;border:2px solid #e5e5e5;color:var(--dark);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
+  .info-btn:hover{background:var(--yellow);border-color:var(--orange);}
+  .add-btn{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--orange),var(--pink));color:white;border:none;font-size:22px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(255,107,53,0.35);transition:all 0.15s;}
+  .add-btn:hover{transform:scale(1.15) rotate(10deg);}
+  .add-btn.added{background:linear-gradient(135deg,var(--green),#00b386);}
+
+  /* MEAL DETAIL MODAL */
+  .meal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:200;align-items:center;justify-content:center;padding:20px;}
+  .meal-overlay.open{display:flex;}
+  .meal-modal{background:white;border-radius:28px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;animation:popIn 0.35s cubic-bezier(.34,1.56,.64,1);border:3px solid var(--yellow);}
+  @keyframes popIn{from{transform:scale(0.8) translateY(30px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+  .modal-img{height:240px;width:100%;position:relative;overflow:hidden;border-radius:24px 24px 0 0;}
+  .modal-img img{width:100%;height:100%;object-fit:cover;}
+  .modal-img-fallback{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:96px;}
+  .modal-close{position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.9);border:none;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.15);}
+  .modal-body{padding:24px;}
+  .modal-badges{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+  .modal-badge{padding:5px 14px;border-radius:100px;font-size:12px;font-weight:800;}
+  .modal-title{font-family:'Fredoka One',cursive;font-size:28px;color:var(--dark);margin-bottom:8px;}
+  .modal-desc{font-size:15px;color:var(--muted);font-weight:600;line-height:1.6;margin-bottom:20px;}
+
+  /* NUTRITION */
+  .nutrition-title{font-family:'Fredoka One',cursive;font-size:18px;color:var(--dark);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+  .nutrition-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;}
+  .nut-card{background:var(--bg);border-radius:14px;padding:12px 8px;text-align:center;border:2px solid #f0f0f0;}
+  .nut-val{font-family:'Fredoka One',cursive;font-size:20px;color:var(--orange);}
+  .nut-label{font-size:11px;font-weight:700;color:var(--muted);margin-top:2px;}
+  .allergens{background:#FFF3E0;border-radius:14px;padding:12px 16px;margin-bottom:20px;border:2px solid #FFE0B2;}
+  .allergen-title{font-size:12px;font-weight:800;color:var(--orange);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;}
+  .allergen-tags{display:flex;gap:6px;flex-wrap:wrap;}
+  .allergen-tag{background:white;border:2px solid #FFE0B2;border-radius:100px;padding:3px 10px;font-size:12px;font-weight:700;color:var(--text);}
+  .ingredients-list{font-size:13px;color:var(--muted);font-weight:600;line-height:1.8;margin-bottom:20px;}
+  .modal-footer{display:flex;align-items:center;justify-content:space-between;padding-top:16px;border-top:2px solid #f5f5f5;}
+  .modal-price{font-family:'Fredoka One',cursive;font-size:30px;color:var(--orange);}
+  .modal-add-btn{background:linear-gradient(135deg,var(--orange),var(--pink));color:white;border:none;border-radius:16px;padding:14px 28px;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 6px 20px rgba(255,107,53,0.35);transition:all 0.2s;font-family:'Nunito',sans-serif;}
+  .modal-add-btn:hover{transform:scale(1.05);}
+
+  /* ORDERS */
+  #orders-section{display:none;}
+  .order-stats{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:28px;}
+  .ostat{flex:1;min-width:130px;background:white;border-radius:18px;padding:18px;text-align:center;border:3px solid transparent;box-shadow:0 4px 14px rgba(0,0,0,0.07);transition:transform 0.2s;}
+  .ostat:hover{transform:scale(1.03);}
+  .ostat.s1{border-color:var(--yellow);}
+  .ostat.s2{border-color:var(--orange);}
+  .ostat.s3{border-color:var(--green);}
+  .ostat.s4{border-color:var(--muted);}
+  .ostat-num{font-family:'Fredoka One',cursive;font-size:36px;}
+  .ostat.s1 .ostat-num,.ostat.s2 .ostat-num{color:var(--orange);}
+  .ostat.s3 .ostat-num{color:var(--green);}
+  .ostat.s4 .ostat-num{color:var(--muted);}
+  .ostat-label{font-size:12px;font-weight:800;color:var(--muted);}
+  .orders-table{width:100%;border-collapse:separate;border-spacing:0 10px;}
+  .orders-table th{text-align:left;font-size:12px;font-weight:800;color:var(--muted);padding:0 16px 4px;text-transform:uppercase;letter-spacing:0.5px;}
+  .orders-table tr.order-row td{background:white;padding:14px 16px;border-top:2px solid #f0f0f0;border-bottom:2px solid #f0f0f0;font-size:14px;font-weight:600;}
+  .orders-table tr.order-row td:first-child{border-left:2px solid #f0f0f0;border-radius:14px 0 0 14px;}
+  .orders-table tr.order-row td:last-child{border-right:2px solid #f0f0f0;border-radius:0 14px 14px 0;}
+  .orders-table tr.order-row:hover td{background:#fffaf5;border-color:var(--yellow);}
+  .status-tag{display:inline-flex;align-items:center;gap:5px;padding:5px 14px;border-radius:100px;font-size:12px;font-weight:800;}
+  .s-received{background:#FFF3CD;color:#b8860b;}
+  .s-preparing{background:#FFE5D9;color:var(--orange);}
+  .s-ready{background:#D4F5E9;color:#0a9e6c;}
+  .s-delivered{background:#f0f0f0;color:var(--muted);}
+  .advance-btn{background:linear-gradient(135deg,var(--blue),var(--purple));color:white;border:none;border-radius:10px;padding:7px 14px;font-size:12px;font-weight:800;cursor:pointer;transition:all 0.2s;font-family:'Nunito',sans-serif;}
+  .advance-btn:hover{transform:scale(1.05);}
+
+  /* CART MODAL */
+  .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:300;align-items:flex-end;justify-content:center;}
+  .overlay.open{display:flex;}
+  .cart-modal{background:var(--bg);border:3px solid var(--yellow);border-radius:28px 28px 0 0;padding:28px 24px;width:100%;max-width:480px;max-height:80vh;overflow-y:auto;animation:slideUp 0.3s cubic-bezier(.34,1.56,.64,1);box-shadow:0 -10px 40px rgba(0,0,0,0.15);}
+  @keyframes slideUp{from{transform:translateY(120%)}to{transform:translateY(0)}}
+  .cart-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+  .cart-title{font-family:'Fredoka One',cursive;font-size:26px;color:var(--dark);}
+  .close-btn{width:34px;height:34px;border-radius:50%;background:#f0f0f0;border:none;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  .cart-item{display:flex;align-items:center;gap:14px;padding:14px;background:white;border-radius:16px;margin-bottom:10px;border:2px solid #f0f0f0;}
+  .cart-item-emoji{font-size:34px;}
+  .cart-item-info{flex:1;}
+  .cart-item-name{font-weight:800;font-size:15px;}
+  .cart-item-price{font-size:13px;color:var(--muted);font-weight:600;}
+  .qty-control{display:flex;align-items:center;gap:10px;font-weight:800;}
+  .qty-btn{width:30px;height:30px;border-radius:8px;background:var(--yellow);border:2px solid var(--orange);color:var(--dark);font-size:16px;cursor:pointer;font-weight:900;display:flex;align-items:center;justify-content:center;}
+  .cart-total{padding:16px;background:white;border-radius:16px;border:2px solid var(--yellow);margin-top:8px;display:flex;justify-content:space-between;align-items:center;}
+  .total-label{font-size:14px;color:var(--muted);font-weight:700;}
+  .total-amount{font-family:'Fredoka One',cursive;font-size:28px;color:var(--orange);}
+  .checkout-btn{width:100%;background:linear-gradient(135deg,var(--orange),var(--pink));color:white;border:none;border-radius:16px;padding:16px;font-size:17px;font-weight:800;cursor:pointer;margin-top:14px;box-shadow:0 6px 20px rgba(255,107,53,0.35);transition:all 0.2s;font-family:'Nunito',sans-serif;}
+  .checkout-btn:hover{transform:scale(1.02);}
+
+  /* SUCCESS */
+  .success-modal{display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.6);align-items:center;justify-content:center;}
+  .success-modal.open{display:flex;}
+  .success-box{background:white;border-radius:28px;padding:40px 32px;text-align:center;max-width:340px;width:90%;border:4px solid var(--green);animation:popIn 0.4s cubic-bezier(.34,1.56,.64,1);box-shadow:0 20px 60px rgba(0,0,0,0.2);}
+  .success-emoji{font-size:64px;margin-bottom:12px;display:block;}
+  .success-title{font-family:'Fredoka One',cursive;font-size:28px;color:var(--dark);margin-bottom:8px;}
+  .success-msg{color:var(--muted);font-weight:600;font-size:15px;margin-bottom:24px;}
+  .success-btn{background:linear-gradient(135deg,var(--green),#00b386);color:white;border:none;border-radius:14px;padding:13px 30px;font-size:16px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;}
+
+  /* TOAST */
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--dark);color:white;padding:12px 24px;border-radius:100px;font-size:14px;font-weight:800;transition:transform 0.3s cubic-bezier(.34,1.56,.64,1);z-index:500;border:2px solid var(--yellow);box-shadow:0 8px 24px rgba(0,0,0,0.2);}
+  .toast.show{transform:translateX(-50%) translateY(0);}
+
+  /* FLOATING */
+  .star{position:fixed;pointer-events:none;z-index:0;font-size:20px;animation:starFloat linear infinite;opacity:0.2;}
+  @keyframes starFloat{0%{transform:translateY(100vh) rotate(0)}100%{transform:translateY(-100px) rotate(360deg)}}
+
+  @media(max-width:700px){
+    .hero{flex-direction:column;gap:24px;padding-top:30px;}
+    .hero-right{flex-direction:row;flex-wrap:wrap;justify-content:center;}
+    .stat-bubble{min-width:110px;padding:14px;}
+    .nutrition-grid{grid-template-columns:repeat(2,1fr);}
+  }
+</style>
+</head>
+<body>
+
+<div class="blobs">
+  <div class="blob blob1"></div><div class="blob blob2"></div>
+  <div class="blob blob3"></div><div class="blob blob4"></div>
+</div>
+<div class="dots-bg"></div>
+<div class="star" style="left:5%;animation-duration:12s">⭐</div>
+<div class="star" style="left:20%;animation-duration:15s;animation-delay:3s">🌟</div>
+<div class="star" style="left:70%;animation-duration:10s;animation-delay:6s">✨</div>
+<div class="star" style="left:85%;animation-duration:14s;animation-delay:1s">⭐</div>
+
+<!-- NAV -->
+<nav>
+  <div class="logo"><span class="logo-emoji">🍱</span> PrepPals</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showSection('menu',this)">🍔 Menu</button>
+    <button class="nav-tab" onclick="showSection('orders',this)">📋 Orders</button>
+  </div>
+  <button class="cart-btn" onclick="openCart()">
+    🛒 My Lunch <span class="cart-count" id="cart-count">0</span>
+  </button>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-left">
+    <div class="hero-tag">🎉 Lunchtime just got awesome!</div>
+    <h1>Yummy meals<br/>kids <span class="highlight">actually love!</span> 🥳</h1>
+    <p>Fresh, healthy, ready-made lunches delivered straight to school. No fuss, just delicious!</p>
+    <div class="hero-btns">
+      <button class="btn-main" onclick="document.querySelector('.cats').scrollIntoView({behavior:'smooth'})">🍴 Order Lunch!</button>
+      <button class="btn-sec" onclick="showSection('orders',document.querySelectorAll('.nav-tab')[1])">📋 Track Orders</button>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="stat-bubble"><div class="stat-num">12</div><div class="stat-label">Yummy Meals</div></div>
+    <div class="stat-bubble"><div class="stat-num">20<small style="font-size:16px;color:var(--muted)">min</small></div><div class="stat-label">Super Fast</div></div>
+    <div class="stat-bubble"><div class="stat-num">😍 5/5</div><div class="stat-label">Kids Love It</div></div>
+  </div>
+</div>
+
+<!-- CATEGORIES -->
+<div class="cats">
+  <button class="cat-pill active" onclick="filterCat('All',this)">🍽️ All</button>
+  <button class="cat-pill" onclick="filterCat('Sandwich',this)">🥪 Sandwiches</button>
+  <button class="cat-pill" onclick="filterCat('Hot',this)">🔥 Hot Meals</button>
+  <button class="cat-pill" onclick="filterCat('Snack',this)">🍎 Snacks</button>
+  <button class="cat-pill" onclick="filterCat('Pasta',this)">🍝 Pasta</button>
+  <button class="cat-pill" onclick="filterCat('Rice',this)">🍚 Rice Bowls</button>
+</div>
+
+<!-- MENU -->
+<div id="menu-section">
+  <div class="section">
+    <div class="section-title">🌟 Today's Lunch Menu</div>
+    <div class="meal-grid" id="meal-grid"></div>
+  </div>
+</div>
+
+<!-- ORDERS -->
+<div id="orders-section" class="section">
+  <div class="section-title">📋 Live Orders Dashboard</div>
+  <div class="order-stats">
+    <div class="ostat s1"><div class="ostat-num" id="c-received">0</div><div class="ostat-label">🟡 Received</div></div>
+    <div class="ostat s2"><div class="ostat-num" id="c-preparing">0</div><div class="ostat-label">🔥 Preparing</div></div>
+    <div class="ostat s3"><div class="ostat-num" id="c-ready">0</div><div class="ostat-label">✅ Ready</div></div>
+    <div class="ostat s4"><div class="ostat-num" id="c-delivered">0</div><div class="ostat-label">🚀 Delivered</div></div>
+  </div>
+  <table class="orders-table">
+    <thead><tr><th>Order</th><th>Kid's Name</th><th>Meal</th><th>Amount</th><th>Status</th><th>Update</th></tr></thead>
+    <tbody id="orders-tbody"></tbody>
+  </table>
+</div>
+
+<!-- MEAL DETAIL MODAL -->
+<div class="meal-overlay" id="meal-overlay" onclick="handleMealOverlay(event)">
+  <div class="meal-modal" id="meal-modal">
+    <div class="modal-img" id="modal-img-wrap">
+      <button class="modal-close" onclick="closeMealModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-badges" id="modal-badges"></div>
+      <div class="modal-title" id="modal-title"></div>
+      <div class="modal-desc" id="modal-desc"></div>
+      <div class="nutrition-title">🔥 Nutrition Facts</div>
+      <div class="nutrition-grid" id="modal-nutrition"></div>
+      <div class="allergens" id="modal-allergens"></div>
+      <div class="ingredients-list" id="modal-ingredients"></div>
+      <div class="modal-footer">
+        <div class="modal-price" id="modal-price"></div>
+        <button class="modal-add-btn" id="modal-add-btn">🛒 Add to Lunch Box</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CART MODAL -->
+<div class="overlay" id="overlay" onclick="handleOverlayClick(event)">
+  <div class="cart-modal">
+    <div class="cart-header">
+      <div class="cart-title">🛒 Your Lunch Box</div>
+      <button class="close-btn" onclick="closeCart()">✕</button>
+    </div>
+    <div id="cart-items"></div>
+    <div class="cart-total">
+      <div class="total-label">Total to pay 💳</div>
+      <div class="total-amount" id="cart-total">R0</div>
+    </div>
+    <button class="checkout-btn" onclick="placeOrder()">🎉 Place My Order!</button>
+  </div>
+</div>
+
+<!-- SUCCESS -->
+<div class="success-modal" id="success-modal">
+  <div class="success-box">
+    <span class="success-emoji">🎉</span>
+    <div class="success-title">Order Placed!</div>
+    <div class="success-msg">Your lunch is being prepped with love! Ready in no time 🍴</div>
+    <button class="success-btn" onclick="closeSuccess()">Awesome! 🥳</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const meals = [
+  {
+    id:1, name:"PB&J Classic", desc:"Creamy peanut butter & strawberry jam on soft white bread, cut into fun triangles.",
+    price:35, cat:"Sandwich", emoji:"🥪",
+    img:"https://images.unsplash.com/photo-1559054663-e8d23213f55c?w=600&q=80",
+    bg:"#FFF9E6", badge:"fave", badgeText:"Kid Fave", time:"5 min",
+    calories:320, protein:12, carbs:38, fat:14,
+    allergens:["Peanuts","Gluten","May contain nuts"],
+    ingredients:"Whole wheat bread, natural peanut butter, strawberry jam, no preservatives added.",
+    extra:"Perfect for picky eaters! A lunchbox classic loved by kids everywhere."
+  },
+  {
+    id:2, name:"Cheesy Toastie", desc:"Melted golden cheddar on toasted bread — crispy outside, gooey inside.",
+    price:40, cat:"Sandwich", emoji:"🧀",
+    img:"https://images.unsplash.com/photo-1528736235302-52922df5c122?w=600&q=80",
+    bg:"#FFF3E0", badge:"hot", badgeText:"Popular", time:"8 min",
+    calories:380, protein:16, carbs:34, fat:20,
+    allergens:["Gluten","Dairy"],
+    ingredients:"White bread, mature cheddar cheese, butter. Grilled to golden perfection.",
+    extra:"Served warm and toasty. Kids go crazy for the melty cheese pull! 🧀"
+  },
+  {
+    id:3, name:"Mini Chicken Wraps", desc:"Tender chicken mayo with crisp lettuce in soft flour tortillas, sliced into rolls.",
+    price:55, cat:"Sandwich", emoji:"🌯",
+    img:"https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=600&q=80",
+    bg:"#F3E5F5", badge:"new", badgeText:"New!", time:"10 min",
+    calories:290, protein:22, carbs:28, fat:9,
+    allergens:["Gluten","Eggs","Mustard"],
+    ingredients:"Flour tortilla, grilled chicken breast, light mayo, iceberg lettuce, mild seasoning.",
+    extra:"High protein option — great for active kids! Comes as 3 mini rolls."
+  },
+  {
+    id:4, name:"Mac & Cheese", desc:"Creamy cheesy macaroni — the ultimate comfort food every kid dreams about.",
+    price:60, cat:"Hot", emoji:"🍝",
+    img:"https://images.unsplash.com/photo-1543339494-b4cd4f7ba686?w=600&q=80",
+    bg:"#FFF8E1", badge:"fave", badgeText:"Kid Fave", time:"15 min",
+    calories:450, protein:18, carbs:52, fat:19,
+    allergens:["Gluten","Dairy","Eggs"],
+    ingredients:"Elbow macaroni, cheddar cheese sauce, butter, milk, mild seasoning. No artificial colours.",
+    extra:"Our #1 best seller! Made fresh daily with real cheese — no powder here 🧀"
+  },
+  {
+    id:5, name:"Chicken Nuggets", desc:"Golden crispy nuggets with a side of tomato dipping sauce. Always a winner!",
+    price:65, cat:"Hot", emoji:"🍗",
+    img:"https://images.unsplash.com/photo-1562802378-063ec186a863?w=600&q=80",
+    bg:"#FFF3E0", badge:"hot", badgeText:"🔥 Hot", time:"15 min",
+    calories:410, protein:26, carbs:30, fat:18,
+    allergens:["Gluten","Eggs"],
+    ingredients:"100% chicken breast, seasoned breadcrumb coating, sunflower oil. Served with tomato sauce.",
+    extra:"6 nuggets per portion. Made with real chicken, no fillers or mystery meat!"
+  },
+  {
+    id:6, name:"Mini Hotdogs", desc:"Soft rolls with juicy mini frankfurters, a squeeze of ketchup & mustard.",
+    price:50, cat:"Hot", emoji:"🌭",
+    img:"https://images.unsplash.com/photo-1619740455993-9d0f5f9edfe5?w=600&q=80",
+    bg:"#FCE4EC", badge:"yummy", badgeText:"Yummy", time:"10 min",
+    calories:360, protein:14, carbs:32, fat:20,
+    allergens:["Gluten","Pork","Mustard"],
+    ingredients:"Mini beef/pork frankfurters, soft white rolls, ketchup, mild mustard.",
+    extra:"2 mini hotdogs per portion. A classic kids' party favourite — now at lunch!"
+  },
+  {
+    id:7, name:"Apple & Cheese Box", desc:"Sliced crisp apples, cheddar cubes & a small juice box — the perfect snack trio.",
+    price:40, cat:"Snack", emoji:"🍎",
+    img:"https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=600&q=80",
+    bg:"#E8F5E9", badge:"healthy", badgeText:"Healthy", time:"5 min",
+    calories:210, protein:7, carbs:26, fat:9,
+    allergens:["Dairy"],
+    ingredients:"Fresh red apple slices, cheddar cheese cubes, 100% apple juice box (no added sugar).",
+    extra:"No prep needed by parents! A balanced snack with natural sugars & protein 🍎"
+  },
+  {
+    id:8, name:"Rainbow Fruit Skewers", desc:"Colourful fruit on sticks — watermelon, grapes, strawberry & melon.",
+    price:35, cat:"Snack", emoji:"🍡",
+    img:"https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=600&q=80",
+    bg:"#F3E5F5", badge:"healthy", badgeText:"Healthy", time:"5 min",
+    calories:120, protein:2, carbs:28, fat:0,
+    allergens:["None"],
+    ingredients:"Watermelon, green grapes, strawberries, cantaloupe melon. Served on food-safe skewers.",
+    extra:"Kids eat more fruit when it's on a stick! 100% natural, zero added sugar 🌈"
+  },
+  {
+    id:9, name:"Dippy Veggie Box", desc:"Carrot & cucumber sticks with a creamy hummus dip. Healthy & fun to eat!",
+    price:38, cat:"Snack", emoji:"🥕",
+    img:"https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80",
+    bg:"#E8F5E9", badge:"healthy", badgeText:"Healthy", time:"5 min",
+    calories:150, protein:5, carbs:18, fat:6,
+    allergens:["Sesame"],
+    ingredients:"Fresh carrot sticks, cucumber batons, creamy hummus (chickpea, tahini, lemon, garlic).",
+    extra:"The dipping makes it fun! Great way to sneak veggies into lunch 🥕"
+  },
+  {
+    id:10, name:"Spaghetti & Sauce", desc:"Soft spaghetti with a rich tomato sauce hiding a secret: loads of veggies!",
+    price:58, cat:"Pasta", emoji:"🍝",
+    img:"https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=600&q=80",
+    bg:"#FFF8E1", badge:"fave", badgeText:"Kid Fave", time:"20 min",
+    calories:390, protein:14, carbs:58, fat:10,
+    allergens:["Gluten","Celery"],
+    ingredients:"Spaghetti, blended tomato & veggie sauce (carrots, onion, courgette), olive oil, parmesan.",
+    extra:"Parents love this one — kids get their veggies without even knowing! 🍅"
+  },
+  {
+    id:11, name:"Fun Pasta Shapes", desc:"Star & dinosaur shaped pasta with creamy butter and parmesan. Pure joy in a bowl.",
+    price:52, cat:"Pasta", emoji:"🦕",
+    img:"https://images.unsplash.com/photo-1556761223-4c4282c73f77?w=600&q=80",
+    bg:"#F3E5F5", badge:"new", badgeText:"New!", time:"15 min",
+    calories:370, protein:13, carbs:54, fat:12,
+    allergens:["Gluten","Dairy","Eggs"],
+    ingredients:"Fun-shaped pasta (stars, dinos), butter, parmesan, light cream, mild seasoning.",
+    extra:"Who said pasta has to be boring? Dino shapes make every bite an adventure! 🦕"
+  },
+  {
+    id:12, name:"Chicken Rice Bowl", desc:"Fluffy steamed rice with tender chicken bites in a mild golden gravy.",
+    price:68, cat:"Rice", emoji:"🍱",
+    img:"https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=600&q=80",
+    bg:"#E3F2FD", badge:"hot", badgeText:"Popular", time:"20 min",
+    calories:420, protein:28, carbs:48, fat:10,
+    allergens:["Gluten","Celery"],
+    ingredients:"Jasmine rice, grilled chicken breast, mild turmeric gravy, peas, carrots.",
+    extra:"A complete balanced meal — protein, carbs & veggies all in one bowl! 🍱"
+  }
+];
+
+const badgeClass={fave:'badge-fave',hot:'badge-hot',new:'badge-new',healthy:'badge-healthy',yummy:'badge-yummy'};
+let cart={};
+const statusOrder=["Received","Preparing","Ready","Delivered"];
+const orders=[
+  {id:"#001",customer:"Liam T.",meal:"Mac & Cheese",amount:"R60",status:"Received"},
+  {id:"#002",customer:"Zoe M.",meal:"Chicken Nuggets",amount:"R65",status:"Preparing"},
+  {id:"#003",customer:"Kagiso D.",meal:"Mini Chicken Wraps",amount:"R110",status:"Ready"},
+  {id:"#004",customer:"Aisha P.",meal:"PB&J Classic",amount:"R35",status:"Delivered"},
+  {id:"#005",customer:"Noah K.",meal:"Spaghetti & Sauce",amount:"R58",status:"Received"},
+  {id:"#006",customer:"Lily S.",meal:"Rainbow Fruit Skewers",amount:"R35",status:"Preparing"},
+];
+
+function renderMeals(cat){
+  const grid=document.getElementById('meal-grid');
+  const filtered=cat==="All"?meals:meals.filter(m=>m.cat===cat);
+  grid.innerHTML=filtered.map(m=>`
+    <div class="meal-card" onclick="openMealModal(${m.id})">
+      <div class="meal-img">
+        <img src="${m.img}" alt="${m.name}" onerror="this.parentElement.innerHTML='<div class=meal-img-fallback>${m.emoji}</div><span class=meal-badge ${badgeClass[m.badge]}>${m.badgeText}</span><span class=meal-time>⏱ ${m.time}</span><span class=meal-cals>🔥 ${m.calories} kcal</span>'" loading="lazy"/>
+        <span class="meal-badge ${badgeClass[m.badge]}">${m.badgeText}</span>
+        <span class="meal-time">⏱ ${m.time}</span>
+        <span class="meal-cals">🔥 ${m.calories} kcal</span>
+      </div>
+      <div class="meal-info">
+        <div class="meal-name">${m.name}</div>
+        <div class="meal-desc">${m.desc}</div>
+        <div class="meal-footer">
+          <div class="meal-price">R${m.price}<small> / portion</small></div>
+          <div class="card-btns">
+            <button class="info-btn" onclick="event.stopPropagation();openMealModal(${m.id})" title="View details">ℹ️</button>
+            <button class="add-btn" id="add-${m.id}" onclick="event.stopPropagation();addToCart(${m.id})">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openMealModal(id){
+  const m=meals.find(x=>x.id===id);
+  // Image
+  const imgWrap=document.getElementById('modal-img-wrap');
+  imgWrap.style.background=m.bg;
+  imgWrap.innerHTML=`
+    <img src="${m.img}" alt="${m.name}" style="width:100%;height:100%;object-fit:cover;" onerror="this.outerHTML='<div class=modal-img-fallback style=height:100%;background:${m.bg}>${m.emoji}</div>'"/>
+    <button class="modal-close" onclick="closeMealModal()">✕</button>
+  `;
+  // Content
+  document.getElementById('modal-badges').innerHTML=`
+    <span class="modal-badge ${badgeClass[m.badge]}" style="background:${badgeBg(m.badge)};color:${badgeColor(m.badge)}">${m.badgeText}</span>
+    <span class="modal-badge" style="background:#f0f0f0;color:var(--muted)">⏱ ${m.time}</span>
+    <span class="modal-badge" style="background:#FFF3E0;color:var(--orange)">🍽️ ${m.cat}</span>
+  `;
+  document.getElementById('modal-title').textContent=m.name;
+  document.getElementById('modal-desc').textContent=m.desc+' '+m.extra;
+  document.getElementById('modal-nutrition').innerHTML=`
+    <div class="nut-card"><div class="nut-val">${m.calories}</div><div class="nut-label">Calories</div></div>
+    <div class="nut-card"><div class="nut-val">${m.protein}g</div><div class="nut-label">Protein</div></div>
+    <div class="nut-card"><div class="nut-val">${m.carbs}g</div><div class="nut-label">Carbs</div></div>
+    <div class="nut-card"><div class="nut-val">${m.fat}g</div><div class="nut-label">Fat</div></div>
+  `;
+  const allergenHTML=m.allergens[0]==='None'
+    ?'<div class="allergen-title">✅ Allergens</div><span style="font-size:13px;font-weight:600;color:var(--green)">No common allergens!</span>'
+    :`<div class="allergen-title">⚠️ Contains Allergens</div><div class="allergen-tags">${m.allergens.map(a=>`<span class="allergen-tag">${a}</span>`).join('')}</div>`;
+  document.getElementById('modal-allergens').innerHTML=allergenHTML;
+  document.getElementById('modal-ingredients').innerHTML=`<strong style="color:var(--dark)">🧾 Ingredients:</strong> ${m.ingredients}`;
+  document.getElementById('modal-price').textContent=`R${m.price}`;
+  document.getElementById('modal-add-btn').onclick=()=>{addToCart(id);closeMealModal();};
+  document.getElementById('meal-overlay').classList.add('open');
+}
+
+function badgeBg(b){return{fave:'#FF4D8D',hot:'#FF6B35',new:'#06D6A0',healthy:'#4CC9F0',yummy:'#FFD93D'}[b]||'#eee';}
+function badgeColor(b){return b==='yummy'?'#1a1a2e':'white';}
+
+function closeMealModal(){document.getElementById('meal-overlay').classList.remove('open');}
+function handleMealOverlay(e){if(e.target===document.getElementById('meal-overlay'))closeMealModal();}
+
+function filterCat(cat,el){
+  document.querySelectorAll('.cat-pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  renderMeals(cat);
+}
+
+function addToCart(id){
+  const m=meals.find(x=>x.id===id);
+  cart[id]=cart[id]?{...cart[id],qty:cart[id].qty+1}:{...m,qty:1};
+  updateCartCount();
+  showToast(`${m.emoji} ${m.name} added to lunch box!`);
+  const btn=document.getElementById(`add-${id}`);
+  if(btn){btn.classList.add('added');btn.textContent='✓';setTimeout(()=>{btn.classList.remove('added');btn.textContent='+';},900);}
+}
+
+function updateCartCount(){
+  document.getElementById('cart-count').textContent=Object.values(cart).reduce((s,i)=>s+i.qty,0);
+}
+
+function openCart(){
+  const items=Object.values(cart);
+  const div=document.getElementById('cart-items');
+  div.innerHTML=items.length
+    ?items.map(i=>`<div class="cart-item"><span class="cart-item-emoji">${i.emoji}</span><div class="cart-item-info"><div class="cart-item-name">${i.name}</div><div class="cart-item-price">R${i.price} each</div></div><div class="qty-control"><button class="qty-btn" onclick="changeQty(${i.id},-1)">−</button><span>${i.qty}</span><button class="qty-btn" onclick="changeQty(${i.id},1)">+</button></div></div>`).join('')
+    :'<p style="text-align:center;padding:28px;color:var(--muted);font-weight:700;font-size:16px">🍽️ Your lunch box is empty!<br/>Add some yummy meals!</p>';
+  document.getElementById('cart-total').textContent=`R${items.reduce((s,i)=>s+i.price*i.qty,0)}`;
+  document.getElementById('overlay').classList.add('open');
+}
+
+function changeQty(id,delta){
+  if(!cart[id])return;
+  cart[id].qty+=delta;
+  if(cart[id].qty<=0)delete cart[id];
+  updateCartCount();openCart();
+}
+
+function handleOverlayClick(e){if(e.target===document.getElementById('overlay'))closeCart();}
+function closeCart(){document.getElementById('overlay').classList.remove('open');}
+function placeOrder(){
+  if(!Object.keys(cart).length)return;
+  cart={};updateCartCount();closeCart();
+  document.getElementById('success-modal').classList.add('open');
+}
+function closeSuccess(){document.getElementById('success-modal').classList.remove('open');}
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+function showSection(section,el){
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('menu-section').style.display=section==='menu'?'block':'none';
+  document.getElementById('orders-section').style.display=section==='orders'?'block':'none';
+  if(section==='orders')renderOrders();
+}
+
+function renderOrders(){
+  document.getElementById('orders-tbody').innerHTML=orders.map((o,i)=>`
+    <tr class="order-row">
+      <td style="font-weight:800;color:var(--orange)">${o.id}</td>
+      <td>${o.customer}</td>
+      <td>${o.meal}</td>
+      <td style="font-weight:800">${o.amount}</td>
+      <td><span class="status-tag s-${o.status.toLowerCase()}">${o.status}</span></td>
+      <td>${o.status!=='Delivered'
+        ?`<button class="advance-btn" onclick="advanceStatus(${i})">Next Step →</button>`
+        :'<span style="color:var(--muted);font-weight:700">✅ Done</span>'}</td>
+    </tr>
+  `).join('');
+  updateCounts();
+}
+
+function advanceStatus(i){
+  const idx=statusOrder.indexOf(orders[i].status);
+  if(idx<statusOrder.length-1)orders[i].status=statusOrder[idx+1];
+  renderOrders();
+  showToast(`Order ${orders[i].id} updated to ${orders[i].status}! 🎉`);
+}
+
+function updateCounts(){
+  ['received','preparing','ready','delivered'].forEach(s=>{
+    document.getElementById(`c-${s}`).textContent=orders.filter(o=>o.status.toLowerCase()===s).length;
+  });
+}
+
+renderMeals("All");
+renderOrders();
+</script>
+</body>
+</html>
